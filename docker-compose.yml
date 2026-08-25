@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16          
+    restart: unless-stopped     
+    environment:
+      POSTGRES_USER: sabemi_user
+      POSTGRES_PASSWORD: sabemi_pass      
+      POSTGRES_DB: sabemi_pagamentos
+    ports:
+      - "5432:5432"              
+    volumes:
+      - pgdata:/var/lib/postgresql/data                     # persistência dos dados entre reinícios
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql   # roda automaticamente na 1ª subida
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sabemi_user -d sabemi_pagamentos"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:                        # declara o volume nomeado usado acima
