@@ -48,7 +48,9 @@ public class WebhooksController : ControllerBase
             IdTransacao = request.IdTransacao,
             IdContrato = request.IdContrato,
             Valor = request.Valor,
-            DataPagamento = request.DataPagamento,
+            // ModelState já garantiu que DataPagamento não é null (Required) antes
+            // da action executar - o .Value aqui é seguro.
+            DataPagamento = request.DataPagamento!.Value,
             Status = request.Status,
             PayloadBruto = JsonSerializer.Serialize(request),
             RecebidoEm = DateTime.UtcNow

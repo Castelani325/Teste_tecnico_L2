@@ -17,9 +17,12 @@ public class PagamentoWebhookRequest
     [JsonPropertyName("valor")]
     public decimal Valor { get; set; }
 
+    // DateTime? (não DateTime) é proposital: em tipos por valor não-anuláveis o
+    // [Required] nunca falha, porque o valor ausente vira default(DateTime) em vez
+    // de null - e isso já passou batido como "válido" antes dessa correção.
     [Required(ErrorMessage = "data_pagamento é obrigatório")]
     [JsonPropertyName("data_pagamento")]
-    public DateTime DataPagamento { get; set; }
+    public DateTime? DataPagamento { get; set; }
 
     [Required(ErrorMessage = "status é obrigatório")]
     [JsonPropertyName("status")]
