@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Sabemi.WebhookApi.BackgroundProcessing;
 using Sabemi.WebhookApi.Data;
 using Sabemi.WebhookApi.Filters;
 using Sabemi.WebhookApi.Models;
@@ -13,13 +14,16 @@ namespace Sabemi.WebhookApi.Controllers;
 public class WebhooksController : ControllerBase
 {
     private readonly SabemiDbContext _db;
+    private readonly PagamentoProcessingQueue _queue;
     private readonly ILogger<WebhooksController> _logger;
 
-    public WebhooksController(SabemiDbContext db, ILogger<WebhooksController> logger)
+    public WebhooksController(SabemiDbContext db, PagamentoProcessingQueue queue, ILogger<WebhooksController> logger)
     {
         _db = db;
+        _queue = queue;
         _logger = logger;
     }
+
 
     [HttpPost("pagamento")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
@@ -69,12 +73,17 @@ public class WebhooksController : ControllerBase
 
         _logger.LogInformation("Evento {IdTransacao} recebido e persistido.", request.IdTransacao);
 
-        // 202: já persistimos rápido; o processamento pesado (2s) e o status_contrato
-        // ficam para o BackgroundService da próxima branch.
+        // Enfileira pro PagamentoBackgroundService processar (2s simulados) e
+        // atualizar status_contrato - sem bloquear a resposta ao banco.
+        await _queue.EnfileirarAsync(new PagamentoProcessamentoItem(
+            evento.IdTransacao, evento.IdContrato, evento.Status));
+
+        // 202: já persistimos rápido; o processamento pesado acontece em background.
         return Accepted(new
         {
             mensagem = "Evento recebido com sucesso. Processamento em andamento.",
             id_transacao = request.IdTransacao
         });
+
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sabemi.WebhookApi.BackgroundProcessing;
 using Sabemi.WebhookApi.Data;
 using Sabemi.WebhookApi.Filters;
 
@@ -13,6 +14,10 @@ builder.Services.AddDbContext<SabemiDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddScoped<ApiKeyAuthFilter>();
+
+// Fila em memoria + worker que consome ela em background (feat/background-worker).
+builder.Services.AddSingleton<PagamentoProcessingQueue>();
+builder.Services.AddHostedService<PagamentoBackgroundService>();
 
 var app = builder.Build();
 
