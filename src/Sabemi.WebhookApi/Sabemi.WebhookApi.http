@@ -1,6 +1,39 @@
 @Sabemi.WebhookApi_HostAddress = http://localhost:5001
+@ApiKey = sabemi-dev-super-secret-2026
 
-GET {{Sabemi.WebhookApi_HostAddress}}/weatherforecast/
-Accept: application/json
+### Webhook - pagamento novo
+POST {{Sabemi.WebhookApi_HostAddress}}/webhooks/pagamento
+Content-Type: application/json
+X-Api-Key: {{ApiKey}}
+
+{
+  "id_transacao": "tx-http-001",
+  "id_contrato": "contrato-999",
+  "valor": 250.00,
+  "data_pagamento": "2026-08-27T10:00:00Z",
+  "status": "sucesso"
+}
+
+### Webhook - reenvio do mesmo id_transacao (prova de idempotência)
+POST {{Sabemi.WebhookApi_HostAddress}}/webhooks/pagamento
+Content-Type: application/json
+X-Api-Key: {{ApiKey}}
+
+{
+  "id_transacao": "tx-http-001",
+  "id_contrato": "contrato-999",
+  "valor": 199.90,
+  "data_pagamento": "2026-08-27T10:00:00Z",
+  "status": "sucesso"
+}
+
+### Listagem - todos os pagamentos
+GET {{Sabemi.WebhookApi_HostAddress}}/pagamentos
+
+### Listagem - filtrando por status
+GET {{Sabemi.WebhookApi_HostAddress}}/pagamentos?status=sucesso
+
+### Listagem - filtrando por contrato
+GET {{Sabemi.WebhookApi_HostAddress}}/pagamentos?id_contrato=contrato-999
 
 ###
