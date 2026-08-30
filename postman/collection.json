@@ -1,0 +1,106 @@
+{
+  "info": {
+    "name": "Sabemi - Webhooks de Pagamentos",
+    "description": "Collection de testes para o desafio tecnico Sabemi: recebimento de webhooks de pagamento com idempotencia, processamento em background e listagem com filtros.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5001", "type": "string" },
+    { "key": "api_key", "value": "sabemi-dev-super-secret-2026", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Webhooks",
+      "item": [
+        {
+          "name": "POST /webhooks/pagamento - Evento novo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{api_key}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_transacao\": \"tx-postman-001\",\n  \"id_contrato\": \"contrato-999\",\n  \"valor\": 199.90,\n  \"data_pagamento\": \"2026-08-30T10:00:00Z\",\n  \"status\": \"sucesso\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/webhooks/pagamento",
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "pagamento"]
+            },
+            "description": "Envia um webhook novo. Resposta esperada: 202 Accepted (o processamento pesado acontece em background)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /webhooks/pagamento - Reenvio (prova de idempotencia)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{api_key}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_transacao\": \"tx-postman-001\",\n  \"id_contrato\": \"contrato-999\",\n  \"valor\": 199.90,\n  \"data_pagamento\": \"2026-08-30T10:00:00Z\",\n  \"status\": \"sucesso\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/webhooks/pagamento",
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "pagamento"]
+            },
+            "description": "MESMO id_transacao do request anterior. Resposta esperada: 200 OK com mensagem de 'evento ja recebido anteriormente' - prova que a idempotencia funciona (a constraint UNIQUE no banco rejeita a duplicata, e a API trata isso graciosamente em vez de dar erro 500)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pagamentos",
+      "item": [
+        {
+          "name": "GET /pagamentos - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pagamentos",
+              "host": ["{{base_url}}"],
+              "path": ["pagamentos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /pagamentos - Filtrar por status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pagamentos?status=sucesso",
+              "host": ["{{base_url}}"],
+              "path": ["pagamentos"],
+              "query": [{ "key": "status", "value": "sucesso" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /pagamentos - Filtrar por id_contrato",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pagamentos?id_contrato=contrato-999",
+              "host": ["{{base_url}}"],
+              "path": ["pagamentos"],
+              "query": [{ "key": "id_contrato", "value": "contrato-999" }]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
