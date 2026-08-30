@@ -12,7 +12,7 @@ idempotência e resiliência, e exibe o status em um painel administrativo.
 
 Desenvolvido como teste técnico para a vaga de Desenvolvedor(a) .NET — Sabemi Tec.
 
-## 🚀 Teste Rápido
+## Teste Rápido
 
 ### Opção 1 — Testar a demo já no ar (não precisa instalar nada)
 
