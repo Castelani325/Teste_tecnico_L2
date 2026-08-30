@@ -6,8 +6,6 @@ services:
       POSTGRES_USER: sabemi_user
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sabemi_pass}
       POSTGRES_DB: sabemi_pagamentos
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
