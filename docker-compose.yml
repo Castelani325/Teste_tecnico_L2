@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: sabemi_user
-      POSTGRES_PASSWORD: sabemi_pass
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sabemi_pass}
       POSTGRES_DB: sabemi_pagamentos
     ports:
       - "5432:5432"
@@ -27,9 +27,9 @@ services:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Default: "Host=db;Port=5432;Database=sabemi_pagamentos;Username=sabemi_user;Password=sabemi_pass"
-      Security__ApiKey: "sabemi-dev-super-secret-2026"
-      Cors__AllowedOrigins__0: "http://localhost:3000"
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=sabemi_pagamentos;Username=sabemi_user;Password=${POSTGRES_PASSWORD:-sabemi_pass}"
+      Security__ApiKey: ${API_KEY:-sabemi-dev-super-secret-2026}
+      Cors__AllowedOrigins__0: ${FRONTEND_ORIGIN:-http://localhost:3000}
     ports:
       - "5001:8080"
 
@@ -38,7 +38,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: http://localhost:5001
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:5001}
     restart: unless-stopped
     depends_on:
       - api
