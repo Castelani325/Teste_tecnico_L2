@@ -1,21 +1,49 @@
 services:
   db:
-    image: postgres:16          
-    restart: unless-stopped     
+    image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_USER: sabemi_user
-      POSTGRES_PASSWORD: sabemi_pass      
+      POSTGRES_PASSWORD: sabemi_pass
       POSTGRES_DB: sabemi_pagamentos
     ports:
-      - "5432:5432"              
+      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data                     # persistência dos dados entre reinícios
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql   # roda automaticamente na 1ª subida
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U sabemi_user -d sabemi_pagamentos"]
       interval: 5s
       timeout: 5s
       retries: 5
 
+  api:
+    build:
+      context: ./src/Sabemi.WebhookApi
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=sabemi_pagamentos;Username=sabemi_user;Password=sabemi_pass"
+      Security__ApiKey: "sabemi-dev-super-secret-2026"
+      Cors__AllowedOrigins__0: "http://localhost:3000"
+    ports:
+      - "5001:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5001
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+
 volumes:
-  pgdata:                        # declara o volume nomeado usado acima
+  pgdata:
