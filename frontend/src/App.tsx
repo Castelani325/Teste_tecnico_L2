@@ -29,6 +29,8 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtros]);
 
+  const totalErros = pagamentos.filter((p) => p.status.trim().toLowerCase() === 'erro').length;
+
   return (
     <div className="app">
       <header>
@@ -38,6 +40,12 @@ function App() {
       <FiltrosPagamentos filtros={filtros} onChange={setFiltros} onAtualizar={carregar} />
 
       {erro && <p className="mensagem-erro">{erro}</p>}
+
+      {!erro && totalErros > 0 && (
+        <p className="alerta-eventos-erro">
+          ⚠️ {totalErros} pagamento{totalErros > 1 ? 's' : ''} com status de erro encontrado{totalErros > 1 ? 's' : ''}.
+        </p>
+      )}
 
       <PagamentosTable pagamentos={pagamentos} carregando={carregando} />
     </div>

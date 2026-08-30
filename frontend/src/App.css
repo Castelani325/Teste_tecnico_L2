@@ -1,97 +1,31 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: #f4f5f7;
-  color: #1a1a1a;
-}
-
-.app {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-}
-
-header h1 {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.filtros {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-end;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.filtro-campo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.filtro-campo label {
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
   font-size: 0.8rem;
-  color: #555;
-}
-
-.filtro-campo select,
-.filtro-campo input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  min-width: 180px;
-}
-
-.filtros button {
-  padding: 0.55rem 1.2rem;
-  border: none;
-  border-radius: 6px;
-  background: #2f5fda;
-  color: white;
-  cursor: pointer;
   font-weight: 600;
 }
 
-.filtros button:hover {
-  background: #23459e;
+.status-badge--sucesso {
+  background: #e6f4ea;
+  color: #1e7a34;
 }
 
-.mensagem-estado {
-  color: #666;
-  padding: 1rem 0;
-}
-
-.mensagem-erro {
+.status-badge--erro {
   background: #fdecea;
   color: #a12b23;
+}
+
+tr.linha-erro {
+  background: #fff5f5;
+}
+
+.alerta-eventos-erro {
+  background: #fff3cd;
+  color: #7a5b00;
+  border: 1px solid #ffe69c;
   padding: 0.75rem 1rem;
   border-radius: 6px;
   margin-bottom: 1rem;
-}
-
-.tabela-pagamentos {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.tabela-pagamentos th,
-.tabela-pagamentos td {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #eee;
-  font-size: 0.9rem;
-}
-
-.tabela-pagamentos th {
-  background: #f0f1f4;
   font-weight: 600;
 }

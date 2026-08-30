@@ -13,6 +13,10 @@ function formatarData(data: string): string {
   return new Date(data).toLocaleString('pt-BR');
 }
 
+function ehErro(status: string): boolean {
+  return status.trim().toLowerCase() === 'erro';
+}
+
 export function PagamentosTable({ pagamentos, carregando }: Props) {
   if (carregando) {
     return <p className="mensagem-estado">Carregando pagamentos...</p>;
@@ -36,12 +40,17 @@ export function PagamentosTable({ pagamentos, carregando }: Props) {
       </thead>
       <tbody>
         {pagamentos.map((p) => (
-          <tr key={p.id_transacao}>
+          <tr key={p.id_transacao} className={ehErro(p.status) ? 'linha-erro' : undefined}>
             <td>{p.id_transacao}</td>
             <td>{p.id_contrato}</td>
             <td>{formatarValor(p.valor)}</td>
             <td>{formatarData(p.data_pagamento)}</td>
-            <td>{p.status}</td>
+            <td>
+              <span className={`status-badge ${ehErro(p.status) ? 'status-badge--erro' : 'status-badge--sucesso'}`}>
+                {ehErro(p.status) && '⚠️ '}
+                {p.status}
+              </span>
+            </td>
             <td>{formatarData(p.recebido_em)}</td>
           </tr>
         ))}
